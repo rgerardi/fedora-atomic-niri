@@ -37,7 +37,9 @@ dnf5 -y install SDL2_image \
 		cascadia-fonts-all \
 		chafa \
 		curl \
+		distrobox \
 		dunst \
+		edk2-ovmf \
 		fastfetch \
 		fontawesome-fonts-all \
 		foot \
@@ -54,8 +56,12 @@ dnf5 -y install SDL2_image \
 		gum \
 		htop \
 		imv \
+		incus \
+		incus-client \
+		incus-tools \
 		iwd \
 		jetbrains-mono-fonts-all \
+		libvirt \
 		lm_sensors \
 		niri \
 		nwg-bar \
@@ -64,14 +70,25 @@ dnf5 -y install SDL2_image \
 		podman-machine \
 		podman-tui \
 		powertop \
+		qemu-kvm-core \
+		qemu-device-display-virtio-gpu.x86_64 \
+		qemu-device-display-virtio-gpu-gl.x86_64 \
+		qemu-device-display-virtio-gpu-pci.x86_64 \
+		qemu-device-display-virtio-gpu-pci-gl.x86_64 \
 		qt6ct \
 		rclone \
 		socat \
 		slurp \
+		stow \
 		swaybg \
 		swayidle \
 		tailscale \
 		tmux \
+		virt-install \
+		virt-firmware-rs.x86_64 \
+		virt-manager \
+		virt-top \
+		virt-viewer \
 		vulkan-tools \
 		waybar \
 		wev \
@@ -80,6 +97,17 @@ dnf5 -y install SDL2_image \
 		zsh \
 		zsh-autosuggestions \
 		zsh-syntax-highlighting
+
+cat <<EOT > /etc/yum.repos.d/smallstep.repo
+[smallstep]
+name=Smallstep
+baseurl=https://packages.smallstep.com/stable/fedora/
+enabled=1
+repo_gpgcheck=0
+gpgcheck=1
+gpgkey=https://packages.smallstep.com/keys/smallstep-0x889B19391F774443.gpg
+EOT
+dnf makecache && dnf install -y step-cli
 
 dnf5 clean all
 
