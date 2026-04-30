@@ -24,6 +24,8 @@ dnf5 autoremove -y
 # Disable COPRs so they don't end up enabled on the final image:
 # dnf5 -y copr disable ublue-os/staging
 
+dnf5 -y group install virtualization --with-optional
+
 dnf5 -y install SDL2_image \
 		SDL3_image \
 		SDL3_ttf \
@@ -39,7 +41,6 @@ dnf5 -y install SDL2_image \
 		curl \
 		distrobox \
 		dunst \
-		edk2-ovmf \
 		fastfetch \
 		fontawesome-fonts-all \
 		foot \
@@ -52,7 +53,6 @@ dnf5 -y install SDL2_image \
 		google-noto-sans-mono-fonts \
 		google-noto-serif-fonts \
 		grim \
-		guestfs-tools \
 		gum \
 		htop \
 		imv \
@@ -61,7 +61,6 @@ dnf5 -y install SDL2_image \
 		incus-tools \
 		iwd \
 		jetbrains-mono-fonts-all \
-		libvirt \
 		lm_sensors \
 		niri \
 		nwg-bar \
@@ -70,11 +69,6 @@ dnf5 -y install SDL2_image \
 		podman-machine \
 		podman-tui \
 		powertop \
-		qemu-kvm-core \
-		qemu-device-display-virtio-gpu.x86_64 \
-		qemu-device-display-virtio-gpu-gl.x86_64 \
-		qemu-device-display-virtio-gpu-pci.x86_64 \
-		qemu-device-display-virtio-gpu-pci-gl.x86_64 \
 		qt6ct \
 		rclone \
 		socat \
@@ -84,11 +78,6 @@ dnf5 -y install SDL2_image \
 		swayidle \
 		tailscale \
 		tmux \
-		virt-install \
-		virt-firmware-rs.x86_64 \
-		virt-manager \
-		virt-top \
-		virt-viewer \
 		vulkan-tools \
 		waybar \
 		wev \
