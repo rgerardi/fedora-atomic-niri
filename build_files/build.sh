@@ -47,6 +47,7 @@ dnf5 -y install SDL2_image \
 		foot-terminfo \
 		fprintd \
 		fprintd-pam \
+		fzf \
 		gdisk \
 		glow \
 		google-noto-sans-fonts \
@@ -85,7 +86,8 @@ dnf5 -y install SDL2_image \
 		wofi \
 		zsh \
 		zsh-autosuggestions \
-		zsh-syntax-highlighting
+		zsh-syntax-highlighting \
+		zoxide
 
 cat <<EOT > /etc/yum.repos.d/smallstep.repo
 [smallstep]
