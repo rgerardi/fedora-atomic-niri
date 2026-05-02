@@ -29,6 +29,7 @@ dnf5 -y group install virtualization --with-optional
 dnf5 -y install SDL2_image \
 		SDL3_image \
 		SDL3_ttf \
+		atuin \
 		borgbackup \
 		breeze-cursor-theme \
 		breeze-gtk-common \
