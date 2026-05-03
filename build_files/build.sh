@@ -24,7 +24,7 @@ for k in /usr/lib/modules/*; do
     depmod "$(basename "$k")"
 done
 
-dnf5 -y reinstall kernel-cachyos
+dnf5 -y reinstall kernel-cachyos kernel-cachyos-core kernel-cachyos-modules
 dnf5 -y swap zram-generator-defaults cachyos-settings
 dnf5 -y install scx-scheds scx-tools ananicy-cpp
 
