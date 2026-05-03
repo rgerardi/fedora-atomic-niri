@@ -20,13 +20,17 @@ dnf5 copr enable -y bieszczaders/kernel-cachyos
 dnf5 copr enable -y bieszczaders/kernel-cachyos-addons
 dnf5 -y install --setopt=tsflags=noscripts kernel-cachyos
 
+export TMPDIR=/var/tmp
+
 for k in /usr/lib/modules/*; do
     KVER="$(basename "$k")"
     echo "Running depmod for $KVER"
-    depmod -v "$KVER"
+    depmod "$KVER"
+    kernel-install add "$KVER" "/usr/lib/modules/$KVER/vmlinuz"
 done
 
-dnf5 -y reinstall kernel-cachyos-core
+unset TMPDIR
+
 dnf5 -y swap zram-generator-defaults cachyos-settings
 dnf5 -y install scx-scheds scx-tools ananicy-cpp
 
@@ -120,6 +124,8 @@ EOT
 dnf5 makecache && dnf5 install -y step-cli
 
 dnf5 clean all
+
+rm -rf /var/tmp/*
 
 #### Example for enabling a System Unit File
 
