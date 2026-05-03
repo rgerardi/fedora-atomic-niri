@@ -18,7 +18,9 @@ dnf5 autoremove -y
 
 dnf5 copr enable -y bieszczaders/kernel-cachyos
 dnf5 copr enable -y bieszczaders/kernel-cachyos-addons
-dnf5 -y install kernel-cachyos cachyos-settings scx-scheds scx-tools ananicy-cpp
+dnf5 -y install kernel-cachyos
+dnf5 -y swap zram-generator-defaults cachyos-settings
+dnf5 -y install scx-scheds scx-tools ananicy-cpp
 
 setsebool -P domain_kernel_load_modules on
 
