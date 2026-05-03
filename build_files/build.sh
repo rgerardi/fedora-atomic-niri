@@ -16,8 +16,8 @@ dnf5 remove -y kernel kernel-core kernel-modules kernel-modules-core kernel-modu
 
 dnf5 autoremove -y
 
-dnf5 copr enable bieszczaders/kernel-cachyos
-dnf5 copr enable bieszczaders/kernel-cachyos-addons
+dnf5 copr enable -y bieszczaders/kernel-cachyos
+dnf5 copr enable -y bieszczaders/kernel-cachyos-addons
 dnf5 -y install kernel-cachyos cachyos-settings scx-scheds scx-tools ananicy-cpp
 
 setsebool -P domain_kernel_load_modules on
