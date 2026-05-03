@@ -18,7 +18,13 @@ dnf5 autoremove -y
 
 dnf5 copr enable -y bieszczaders/kernel-cachyos
 dnf5 copr enable -y bieszczaders/kernel-cachyos-addons
-dnf5 -y install kernel-cachyos
+dnf5 -y install --setopt=tsflags=noscripts kernel-cachyos
+
+for k in /usr/lib/modules/*; do
+    depmod "$(basename "$k")"
+done
+
+dnf5 -y reinstall kernel-cachyos
 dnf5 -y swap zram-generator-defaults cachyos-settings
 dnf5 -y install scx-scheds scx-tools ananicy-cpp
 
