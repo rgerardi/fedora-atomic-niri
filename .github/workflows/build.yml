@@ -8,6 +8,7 @@ on:
     branches:
       - main
       - cachyos-kernel
+      - noctalia
     paths-ignore:
       - '**/README.md'
   workflow_dispatch:
