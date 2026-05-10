@@ -86,7 +86,6 @@ dnf5 -y install SDL2_image \
 		iwd \
 		jetbrains-mono-fonts-all \
 		lm_sensors \
-		niri \
 		nwg-bar \
 		parted \
 		podman-compose \
@@ -111,6 +110,10 @@ dnf5 -y install SDL2_image \
 		zsh-autosuggestions \
 		zsh-syntax-highlighting \
 		zoxide
+
+dnf5 -y copr enable yalter/niri
+dnf5 -y install niri
+dnf5 -y copr disable yalter/niri
 
 cat <<EOT > /etc/yum.repos.d/smallstep.repo
 [smallstep]
