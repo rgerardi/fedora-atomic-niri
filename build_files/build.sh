@@ -104,6 +104,9 @@ gpgkey=https://packages.smallstep.com/keys/smallstep-0x889B19391F774443.gpg
 EOT
 dnf5 makecache && dnf5 install -y step-cli
 
+dnf5 -y install --nogpgcheck --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release
+dnf5 -y install noctalia-shell
+
 dnf5 clean all
 
 #### Example for enabling a System Unit File
