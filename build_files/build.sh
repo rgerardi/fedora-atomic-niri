@@ -102,6 +102,7 @@ repo_gpgcheck=0
 gpgcheck=1
 gpgkey=https://packages.smallstep.com/keys/smallstep-0x889B19391F774443.gpg
 EOT
+
 dnf5 makecache && dnf5 install -y step-cli
 dnf5 -y config-manager disable smallstep
 
@@ -118,6 +119,8 @@ dnf5 -y config-manager setopt fedora-cisco-openh264.enabled=1
 dnf5 -y install rpmfusion-\*-appstream-data
 dnf5 -y swap ffmpeg-free ffmpeg --allowerasing
 dnf5 -y install mesa-va-drivers-freeworld libva-utils gstreamer1-plugin-openh264
+
+dnf5 list --installed kernel
 
 dnf5 clean all
 
