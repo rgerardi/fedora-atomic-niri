@@ -107,7 +107,7 @@ dnf5 makecache && dnf5 install -y step-cli
 dnf5 -y config-manager disable smallstep
 
 dnf5 -y install --nogpgcheck --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release
-dnf5 -y install noctalia-shell
+dnf5 -y install noctalia-legacy
 dnf5 -y config-manager disable terra
 
 curl https://pkgs.tailscale.com/stable/fedora/tailscale.repo -O --output-dir /etc/yum.repos.d/
