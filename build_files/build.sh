@@ -116,6 +116,7 @@ dnf5 -y config-manager setopt fedora-cisco-openh264.enabled=1
 dnf5 -y install rpmfusion-\*-appstream-data
 dnf5 -y swap ffmpeg-free ffmpeg --allowerasing
 dnf5 -y install mesa-va-drivers-freeworld libva-utils gstreamer1-plugin-openh264
+dnf5 -y config-manager disable "rpmfusion*"
 
 dnf5 list --installed kernel
 
