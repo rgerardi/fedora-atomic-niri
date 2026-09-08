@@ -1,10 +1,18 @@
+ARG BASE_IMAGE=quay.io/fedora-ostree-desktops/sway-atomic:44
+
 # Allow build scripts to be referenced without being copied into the final image
 FROM scratch AS ctx
 COPY build_files /
 
 # Base Image
 #FROM ghcr.io/ublue-os/bazzite:stable
-FROM quay.io/fedora-ostree-desktops/sway-atomic:44
+FROM ${BASE_IMAGE}
+
+ARG BASE_IMAGE
+ARG BASE_IMAGE_DIGEST=unknown
+
+LABEL org.opencontainers.image.base.name="$BASE_IMAGE"
+LABEL org.opencontainers.image.base.digest="$BASE_IMAGE_DIGEST"
 
 ## Other possible base images include:
 # FROM ghcr.io/ublue-os/bazzite:latest

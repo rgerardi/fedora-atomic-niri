@@ -1,34 +1,72 @@
 ---
 name: Build container image
 on:
+  schedule:
+    - cron: '0 3 * * *'
   pull_request:
     branches:
       - main
   push:
     branches:
       - main
-      - cachyos-kernel
-      - noctalia
     paths-ignore:
       - '**/README.md'
   workflow_dispatch:
 
 env:
-  IMAGE_DESC: "My Customized Universal Blue Image"
+  IMAGE_DESC: "Fedora Atomic Desktop with Niri compositor and curated CLI/container tooling"
   IMAGE_KEYWORDS: "bootc,ublue,universal-blue"
   IMAGE_LOGO_URL: "https://avatars.githubusercontent.com/u/120078124?s=200&v=4"  # Put your own image here for a fancy profile on https://artifacthub.io/!
-  IMAGE_NAME: "${{ github.event.repository.name }}"  # output image name, usually same as repo name
+  IMAGE_NAME: "${{ github.event.repository.name || 'fedora-atomic-niri' }}"  # output image name, usually same as repo name
   IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"  # do not edit
   DEFAULT_TAG: "latest"
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.brand_name}}-${{ inputs.stream_name }}
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
+  check-base:
+    name: Check if base image changed
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: read
+    outputs:
+      base_digest: ${{ steps.base.outputs.digest }}
+      should_build: ${{ steps.compare.outputs.should_build }}
+    steps:
+      - name: Get current base image digest
+        id: base
+        run: |
+          skopeo inspect docker://quay.io/fedora-ostree-desktops/sway-atomic:44 --format '{{.Digest}}' > digest.txt
+          echo "digest=$(cat digest.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Compare with last built image
+        id: compare
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          REPO_NAME="${IMAGE_NAME:-${GITHUB_REPOSITORY#*/}}"
+          # Try to get the label from the last image, ignore errors if it doesn't exist (first build)
+          PREV=$(skopeo inspect --creds "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" "docker://ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${REPO_NAME,,}:latest" --format '{{index .Labels "org.opencontainers.image.base.digest"}}' || echo "")
+
+          if [ -n "${PREV}" ] && [ "${PREV}" != "<no value>" ] && [ "${{ steps.base.outputs.digest }}" = "${PREV}" ]; then
+            echo "Base image unchanged (${{ steps.base.outputs.digest }}), skipping scheduled build"
+            echo "should_build=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Base image changed or no previous build, building"
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+          fi
+
   build_push:
     name: Build and push image
     runs-on: ubuntu-24.04
+    needs: check-base
+    if: needs.check-base.outputs.should_build == 'true'
 
     permissions:
       contents: read
@@ -99,6 +137,8 @@ jobs:
         with:
           containerfiles: |
             ./Containerfile
+          build-args: |
+            BASE_IMAGE_DIGEST=${{ needs.check-base.outputs.base_digest }}
           # Postfix image name with -custom to make it a little more descriptive
           # Syntax: https://docs.github.com/en/actions/learn-github-actions/expressions#format
           image: ${{ env.IMAGE_NAME }}
