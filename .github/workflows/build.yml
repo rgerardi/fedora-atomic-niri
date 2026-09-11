@@ -34,32 +34,55 @@ jobs:
       packages: read
     outputs:
       base_digest: ${{ steps.base.outputs.digest }}
+      base_kernel: ${{ steps.base.outputs.kernel }}
       should_build: ${{ steps.compare.outputs.should_build }}
     steps:
-      - name: Get current base image digest
+      - name: Get current base image metadata
         id: base
         run: |
           skopeo inspect docker://quay.io/fedora-ostree-desktops/sway-atomic:44 --format '{{.Digest}}' > digest.txt
           echo "digest=$(cat digest.txt)" >> "$GITHUB_OUTPUT"
+          skopeo inspect docker://quay.io/fedora-ostree-desktops/sway-atomic:44 --format '{{index .Labels "ostree.linux"}}' > kernel.txt
+          echo "kernel=$(cat kernel.txt)" >> "$GITHUB_OUTPUT"
 
       - name: Compare with last built image
         id: compare
         run: |
           if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "Event is ${{ github.event_name }}, building"
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Sunday weekly build: date -u +%u returns 1 (Mon) through 7 (Sun)
+          DOW=$(date -u +%u)
+          if [ "${DOW}" -eq 7 ]; then
+            echo "Scheduled run on Sunday: forcing weekly build"
             echo "should_build=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           REPO_NAME="${IMAGE_NAME:-${GITHUB_REPOSITORY#*/}}"
-          # Try to get the label from the last image, ignore errors if it doesn't exist (first build)
-          PREV=$(skopeo inspect --creds "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" "docker://ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${REPO_NAME,,}:latest" --format '{{index .Labels "org.opencontainers.image.base.digest"}}' || echo "")
+          IMAGE_REF="docker://ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/${REPO_NAME,,}:latest"
 
-          if [ -n "${PREV}" ] && [ "${PREV}" != "<no value>" ] && [ "${{ steps.base.outputs.digest }}" = "${PREV}" ]; then
-            echo "Base image unchanged (${{ steps.base.outputs.digest }}), skipping scheduled build"
-            echo "should_build=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "Base image changed or no previous build, building"
+          PREV_KERNEL=$(skopeo inspect --creds "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" "${IMAGE_REF}" --format '{{index .Labels "ostree.linux"}}' || echo "")
+          [ "${PREV_KERNEL}" = "<no value>" ] && PREV_KERNEL=""
+
+          BASE_KERNEL="${{ steps.base.outputs.kernel }}"
+          [ "${BASE_KERNEL}" = "<no value>" ] && BASE_KERNEL=""
+
+          echo "Base kernel: '${BASE_KERNEL}'"
+          echo "Previous image kernel: '${PREV_KERNEL}'"
+
+          if [ -z "${BASE_KERNEL}" ] || [ -z "${PREV_KERNEL}" ]; then
+            echo "Kernel version missing or first build, building"
             echo "should_build=true" >> "$GITHUB_OUTPUT"
+          elif [ "${BASE_KERNEL}" != "${PREV_KERNEL}" ]; then
+            echo "Kernel updated (${PREV_KERNEL} -> ${BASE_KERNEL}), building"
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Kernel unchanged (${BASE_KERNEL}), skipping build until Sunday or next kernel update"
+            echo "should_build=false" >> "$GITHUB_OUTPUT"
           fi
 
   build_push:
