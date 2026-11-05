@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=quay.io/fedora-ostree-desktops/sway-atomic:44
+ARG BASE_IMAGE=quay.io/fedora-ostree-desktops/sway-atomic:45
 
 # Allow build scripts to be referenced without being copied into the final image
 FROM scratch AS ctx
