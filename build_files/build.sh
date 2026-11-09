@@ -124,3 +124,7 @@ dnf5 clean all
 #### Example for enabling a System Unit File
 
 #systemctl enable podman.socket
+
+# kmscon holds the GPU (DRM master) and blocks niri from starting on tty1
+systemctl mask kmsconvt@tty1.service
+systemctl enable getty@tty1.service
