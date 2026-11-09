@@ -117,6 +117,10 @@ dnf5 -y swap ffmpeg-free ffmpeg --allowerasing
 dnf5 -y install mesa-va-drivers-freeworld libva-utils gstreamer1-plugin-openh264
 dnf5 -y config-manager disable "rpmfusion*"
 
+curl -fsSLo /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:duxlabs:dms.repo https://copr.fedorainfracloud.org/coprs/duxlabs/dms/repo/fedora-$(rpm -E %fedora)/duxlabs-dms-fedora-$(rpm -E %fedora).repo
+curl -fsSLo /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:duxlabs:dux-repo.repo https://copr.fedorainfracloud.org/coprs/duxlabs/dux-repo/repo/fedora-$(rpm -E %fedora)/duxlabs-dux-repo-fedora-$(rpm -E %fedora).repo
+dnf5 -y install kitty dms quickshell matugen
+
 dnf5 list --installed kernel
 
 dnf5 clean all
