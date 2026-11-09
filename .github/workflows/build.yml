@@ -41,9 +41,9 @@ jobs:
       - name: Get current base image metadata
         id: base
         run: |
-          skopeo inspect docker://quay.io/fedora-ostree-desktops/sway-atomic:44 --format '{{.Digest}}' > digest.txt
+          skopeo inspect docker://quay.io/fedora-ostree-desktops/sway-atomic:45 --format '{{.Digest}}' > digest.txt
           echo "digest=$(cat digest.txt)" >> "$GITHUB_OUTPUT"
-          skopeo inspect docker://quay.io/fedora-ostree-desktops/sway-atomic:44 --format '{{index .Labels "ostree.linux"}}' > kernel.txt
+          skopeo inspect docker://quay.io/fedora-ostree-desktops/sway-atomic:45 --format '{{index .Labels "ostree.linux"}}' > kernel.txt
           echo "kernel=$(cat kernel.txt)" >> "$GITHUB_OUTPUT"
 
       - name: Compare with last built image
