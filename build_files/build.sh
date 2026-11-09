@@ -65,7 +65,6 @@ dnf5 -y install SDL2_image \
 		jetbrains-mono-fonts-all \
 		lm_sensors \
 		noctalia \
-		nwg-bar \
 		parted \
 		podman-compose \
 		podman-machine \
